@@ -68,7 +68,7 @@ function onDragStart(e: MouseEvent) {
   window.addEventListener('mouseup', onUp)
 }
 
-function onTouchStart(e: TouchEvent) {
+function onTouchStart(_e: TouchEvent) {
   function onMove(ev: TouchEvent) {
     const m = xToMonth(ev.touches[0].clientX)
     emit('update:month', m as MonthIndex)

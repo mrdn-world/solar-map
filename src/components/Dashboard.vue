@@ -41,17 +41,17 @@
               :x2="barX(month as number) + barW/2" y2="98"
               stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="2 2" />
             <!-- Peak -->
-            <g>
-              <polygon :points="`${barX(peakIdx)+barW/2-4},${comboChart[peakIdx].ghiY-6} ${barX(peakIdx)+barW/2+4},${comboChart[peakIdx].ghiY-6} ${barX(peakIdx)+barW/2},${comboChart[peakIdx].ghiY-1}`"
+            <g v-if="peakBar">
+              <polygon :points="`${barX(peakIdx)+barW/2-4},${peakBar.ghiY-6} ${barX(peakIdx)+barW/2+4},${peakBar.ghiY-6} ${barX(peakIdx)+barW/2},${peakBar.ghiY-1}`"
                 fill="rgba(255,180,0,0.7)" />
-              <text :x="barX(peakIdx)+barW/2" :y="comboChart[peakIdx].ghiY-9"
+              <text :x="barX(peakIdx)+barW/2" :y="peakBar.ghiY-9"
                 text-anchor="middle" fill="rgba(255,180,0,0.8)" font-size="7" font-weight="600">PEAK</text>
             </g>
             <!-- Low -->
-            <g>
-              <polygon :points="`${barX(lowIdx)+barW/2-4},${comboChart[lowIdx].ghiY-6} ${barX(lowIdx)+barW/2+4},${comboChart[lowIdx].ghiY-6} ${barX(lowIdx)+barW/2},${comboChart[lowIdx].ghiY-1}`"
+            <g v-if="lowBar">
+              <polygon :points="`${barX(lowIdx)+barW/2-4},${lowBar.ghiY-6} ${barX(lowIdx)+barW/2+4},${lowBar.ghiY-6} ${barX(lowIdx)+barW/2},${lowBar.ghiY-1}`"
                 fill="rgba(100,160,255,0.7)" />
-              <text :x="barX(lowIdx)+barW/2" :y="comboChart[lowIdx].ghiY-9"
+              <text :x="barX(lowIdx)+barW/2" :y="lowBar.ghiY-9"
                 text-anchor="middle" fill="rgba(100,160,255,0.8)" font-size="7" font-weight="600">LOW</text>
             </g>
             <!-- Month labels -->
@@ -229,8 +229,10 @@ const monthlyTemp = computed(() => {
 })
 
 const monthlyPV = computed(() => {
-  if (!monthlyGHI.value || !monthlyTemp.value) return null
-  return monthlyGHI.value.map((ghi, i) => calcPVOutput(ghi, monthlyTemp.value![i]))
+  const ghi = monthlyGHI.value
+  const temp = monthlyTemp.value
+  if (!ghi || !temp) return null
+  return ghi.map((g, i) => calcPVOutput(g, temp[i] as number))
 })
 
 // ── Combined chart: GHI + PV + TLoss ──
@@ -345,11 +347,8 @@ const lowIdx = computed(() => {
   return best
 })
 
-const annualGHI = computed(() => {
-  const pt = nearestPoint.value
-  if (!pt || pt[2] === null) return '--'
-  return ((pt[3] as number) * 365).toFixed(0)
-})
+const peakBar = computed(() => comboChart.value?.[peakIdx.value])
+const lowBar = computed(() => comboChart.value?.[lowIdx.value])
 
 const annualPVTotal = computed(() => {
   const pt = nearestPoint.value

@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import GlobeMap from './components/GlobeMap.vue'
 import Dashboard from './components/Dashboard.vue'
 import MonthSlider from './components/MonthSlider.vue'

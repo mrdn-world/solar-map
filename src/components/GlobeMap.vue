@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef" class="globe-map">
+  <div class="globe-map">
     <div ref="mapRef" class="globe-map-canvas" />
     <Tooltip :location="hoveredLoc" :x="tooltipX" :y="tooltipY" />
   </div>
@@ -11,7 +11,7 @@ import maplibregl from 'maplibre-gl'
 import Tooltip from './Tooltip.vue'
 import { locations, categoryColors, type LocationData } from '../data/sunny-days'
 import {
-  loadSolarData, loadTilesForView, getGridForView, getLodLevel,
+  loadSolarData, getGridForView,
   generateRaster, generateBlendedRaster, pregenerateRasters, calcPVOutput, tempPenaltyFraction,
   type MonthIndex, type DataMode, type SolarGridV2,
 } from '../data/solar-service'
@@ -28,7 +28,6 @@ const emit = defineEmits<{
   hover: [loc: LocationData | null]
 }>()
 
-const containerRef = ref<HTMLElement>()
 const mapRef = ref<HTMLElement>()
 const tooltipX = ref(0)
 const tooltipY = ref(0)
@@ -36,7 +35,6 @@ const hoveredLoc = ref<LocationData | null>(null)
 const loading = ref(true)
 
 let map: maplibregl.Map | null = null
-let currentLod = 0
 const rasterURLs = new Map<string, string>()
 let pregenMode: DataMode | null = null
 let tweenAnim: number | null = null
@@ -515,42 +513,12 @@ function tweenToMonth(m: maplibregl.Map, data: SolarGridV2, from: MonthIndex, to
   tweenAnim = requestAnimationFrame(frame)
 }
 
-function refreshRaster() {
-  if (!map) return
-  const zoom = map.getZoom()
-  const bounds = getMapBounds(map)
-  const data = getGridForView(zoom, bounds)
-  if (data) {
-    rasterURLs.clear()
-    renderAndApply(map, data, props.month, props.mode)
-  }
-}
-
-let loadDebounce: ReturnType<typeof setTimeout> | null = null
-function onViewChange() {
-  if (!map) return
-  if (loadDebounce) clearTimeout(loadDebounce)
-  loadDebounce = setTimeout(() => {
-    const zoom = map!.getZoom()
-    const bounds = getMapBounds(map!)
-    const newLod = getLodLevel(zoom)
-
-    loadTilesForView(zoom, bounds, () => {
-      refreshRaster()
-    })
-
-    if (newLod !== currentLod) {
-      currentLod = newLod
-      refreshRaster()
-    }
-  }, 200)
-}
-
 onMounted(async () => {
   if (!mapRef.value) return
 
   map = new maplibregl.Map({
     container: mapRef.value,
+    // @ts-expect-error preserveDrawingBuffer is a valid WebGL option
     preserveDrawingBuffer: true,
     style: {
       version: 8,
@@ -812,7 +780,6 @@ watch(() => props.selected, (loc) => {
 })
 
 onUnmounted(() => {
-  if (loadDebounce) clearTimeout(loadDebounce)
   if (tweenAnim) cancelAnimationFrame(tweenAnim)
   if (chartUpdateTimer) clearTimeout(chartUpdateTimer)
   for (const m of markerPool.values()) m.remove()

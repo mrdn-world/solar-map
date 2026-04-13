@@ -273,7 +273,7 @@ export function getPointData(
 // ── Raster generation (optimized) ──
 
 // Pre-bake color LUT (256 entries) for instant color lookups
-function buildColorLUT(mode: DataMode, ghiMin: number, ghiMax: number): Uint8Array {
+function buildColorLUT(mode: DataMode, _ghiMin: number, _ghiMax: number): Uint8Array {
   const lut = new Uint8Array(256 * 4)
   const stops = mode === 'pv' ? pvStops : mode === 'temp-penalty' ? tempPenaltyStops : ghiStops
   for (let i = 0; i < 256; i++) {
@@ -408,10 +408,6 @@ function sampleValue(
   }
   return calcPVOutput(ghi, isNaN(temp) ? 20 : temp)
 }
-
-// Raster cache: dataURL keyed by "gridId_month_mode"
-const rasterCache = new Map<string, string>()
-let lastGridId = 0
 
 // Cached spatial index per data object (keyed by grid length as cheap identity)
 let cachedIdx: SpatialIndex | null = null
