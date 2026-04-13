@@ -1,0 +1,9 @@
+name: CI/CD
+
+on:
+  push:
+
+jobs:
+  deploy:
+    uses: mrdn-world/.github/.github/workflows/deploy.yml@main
+    secrets: inherit

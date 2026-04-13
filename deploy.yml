@@ -1,0 +1,20 @@
+# Project deploy configuration
+# Docs: https://github.com/mrdn-world/.github
+
+project: my-project
+build: npm run build
+output: dist
+
+# Optional overrides:
+# node-version: 22
+# install: pnpm install --frozen-lockfile
+
+# Branches that get deployed with custom subdomains:
+environments:
+  main: my-project
+  # dev: staging-my-project
+
+# Branches that only run build (no deploy):
+# build-only:
+#   - feature/*
+#   - fix/*
