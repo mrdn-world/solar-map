@@ -11,7 +11,7 @@ output: dist
 
 # Branches that get deployed with custom subdomains:
 environments:
-  main: my-project
+  main: solar-map
   # dev: staging-my-project
 
 # Branches that only run build (no deploy):

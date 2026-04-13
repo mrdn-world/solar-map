@@ -1,0 +1,50 @@
+{
+  "year": "2001-2020 climatology",
+  "source": "NASA POWER (CERES SYN1deg / MERRA-2)",
+  "months": [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC"
+  ],
+  "stats": {
+    "ghi_min": 1.33,
+    "ghi_max": 7.37,
+    "ghi_avg": 4.06,
+    "count": 57600,
+    "total": 230976
+  },
+  "lods": [
+    {
+      "level": 0,
+      "step": 5,
+      "file": "lod0.json",
+      "minZoom": 0,
+      "maxZoom": 3
+    },
+    {
+      "level": 1,
+      "step": 2,
+      "tileSize": 30,
+      "dir": "lod1",
+      "minZoom": 3,
+      "maxZoom": 6
+    },
+    {
+      "level": 2,
+      "step": 0.5,
+      "tileSize": 10,
+      "dir": "lod2",
+      "minZoom": 6,
+      "maxZoom": 18
+    }
+  ]
+}
